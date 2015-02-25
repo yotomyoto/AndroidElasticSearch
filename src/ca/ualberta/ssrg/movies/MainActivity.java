@@ -14,6 +14,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import ca.ualberta.ssrg.androidelasticsearch.R;
 import ca.ualberta.ssrg.movies.es.ESMovieManager;
@@ -85,6 +86,8 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
+		Thread thread = new SearchThread("dark"); 
+		thread.start();
 		// Refresh the list when visible
 		// TODO: Search all
 		
@@ -97,9 +100,9 @@ public class MainActivity extends Activity {
 	public void search(View view) {
 		movies.clear();
 
-		// TODO: Extract search query from text view
 		
-		// TODO: Run the search thread
+		SearchThread thread = new SearchThread(search);
+		thread.start();
 		
 	}
 	
@@ -125,7 +128,17 @@ public class MainActivity extends Activity {
 
 
 	class SearchThread extends Thread {
-		// TODO: Implement search thread
+		
+		private String search;
+
+		public SearchThread(String search) {
+			this.search = search;
+		}
+		
+		public void run(){
+			movies.addAll(movieManager.searchMovies("", null));
+			runOnUiThread(doUpdateGUIList);
+		}
 		
 	}
 
